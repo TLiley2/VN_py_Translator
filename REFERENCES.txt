@@ -17,6 +17,7 @@ https://www.geeksforgeeks.org/python-split-string-into-list-of-characters/
 https://github.com/ssut/py-googletrans/issues/268
 https://stackoverflow.com/questions/59238237/why-use-getattr-instead-of-hasattr-for-sys-frozen
 https://github.com/JaidedAI/EasyOCR
+https://www.tutorialspoint.com/python/tk_toplevel.htm
 
 *Updater*
 https://www.geeksforgeeks.org/unzipping-files-in-python/
