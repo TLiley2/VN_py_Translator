@@ -116,7 +116,7 @@ monthchoosen.current()
 label = tk.Label(root, text="Please select the game \nyou are currently running",font=("Arial", 10, "bold"))
 label.grid(column=0, row=0, sticky=tk.S, padx=5, pady=5)
 
-label = tk.Label(root, text="v1.00",font=("Arial", 10, "bold"))
+label = tk.Label(root, text="v0.50",font=("Arial", 10, "bold"))
 label.grid(column=1, row=2, sticky=tk.S, padx=5, pady=5)
 
 button = tk.Button(root, text="Activate", command=lambda: backend.check_Status(n.get()))
