@@ -1,0 +1,125 @@
+{
+ "version": "auto-py-to-exe-configuration_v1",
+ "pyinstallerOptions": [
+  {
+   "optionDest": "noconfirm",
+   "value": true
+  },
+  {
+   "optionDest": "filenames",
+   "value": "C:/Users/tnu20/OneDrive/Documents/Documents/LIGMA/tr_GUI.py"
+  },
+  {
+   "optionDest": "onefile",
+   "value": true
+  },
+  {
+   "optionDest": "console",
+   "value": false
+  },
+  {
+   "optionDest": "clean_build",
+   "value": false
+  },
+  {
+   "optionDest": "strip",
+   "value": false
+  },
+  {
+   "optionDest": "noupx",
+   "value": false
+  },
+  {
+   "optionDest": "disable_windowed_traceback",
+   "value": false
+  },
+  {
+   "optionDest": "uac_admin",
+   "value": false
+  },
+  {
+   "optionDest": "uac_uiaccess",
+   "value": false
+  },
+  {
+   "optionDest": "argv_emulation",
+   "value": false
+  },
+  {
+   "optionDest": "bootloader_ignore_signals",
+   "value": false
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/tnu20/OneDrive/Documents/Documents/LIGMA/backend.py;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/tnu20/OneDrive/Documents/Documents/LIGMA/OCR.py;."
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "backend"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "OCR"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "easyocr"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "screeninfo"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "subprocess"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "pathlib"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "torch"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "cv2"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "requests"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "pyautogui"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "pygetwindow"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "os"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "sys"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "psutil"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/tnu20/anaconda3/python.exe;."
+  }
+ ],
+ "nonPyinstallerOptions": {
+  "increaseRecursionLimit": true,
+  "manualArguments": ""
+ }
+}
