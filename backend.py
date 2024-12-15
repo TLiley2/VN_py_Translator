@@ -8,8 +8,8 @@ import os
 import sys
 from pathlib import Path
 
-#Reads of Shirtcut key in setting          
-def read_Short():
+#Reads setting values                
+def read_SET(set_Name):
     if getattr(sys, 'frozen', False):
         script_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
     else:
@@ -19,7 +19,7 @@ def read_Short():
         content = file.readlines()
         row_without_None = [name.strip() for name in content]
         for item in row_without_None:  # 'item' takes each value from the list in turn
-            if "Shortcut" in item:
+            if str(set_Name) in item:
                 cu = item
                 index = row_without_None.index(cu)
                 lines = content[index].strip()
@@ -27,53 +27,8 @@ def read_Short():
                 res = lines.split(spl_word, 1)
                 splitString = res[1]
                 return splitString
-
-#Reads of API key in setting          
-def read_API():
-    if getattr(sys, 'frozen', False):
-        script_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
-    else:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-    path_set = os.path.join(script_dir, "settings.ini")
-    with open(path_set, 'r') as file:
-        content = file.readlines()
-        row_without_None = [name.strip() for name in content]
-        for item in row_without_None:  # 'item' takes each value from the list in turn
-            if "API_key" in item:
-                cu = item
-                index = row_without_None.index(cu)
-                lines = content[index].strip()
-                spl_word = '= '
-                res = lines.split(spl_word, 1)
-                splitString = res[1]
-                return splitString
-
-#Modifies testing var in setting            
-# def modi_var():
-#     if getattr(sys, 'frozen', False):
-#         script_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
-#     else:
-#         script_dir = os.path.dirname(os.path.abspath(__file__))
-#     # Construct the path for saving the screenshot
-#     path_set = os.path.join(script_dir, "settings.ini")
-#     with open(path_set, 'r+') as file:
-#         content = file.readlines()
-#         row_without_None = [name.strip() for name in content]
-#         for item in row_without_None:  
-#             if "testing_co" in item:
-#                 cu = item
-#                 index = row_without_None.index(cu)
-#                 print(index)
-#                 lines = content[index].strip()
-#                 last_element = lines.split()[-1]
-#                 s1 = lines.replace(last_element, "3")
-#                 file.seek(0)
-#                 content[index] = s1 + '\n'
-#                 file.writelines(content)
-#                 return s1
-      
-#Modifies of API key in setting 
-def modi_API(key):
+            
+def modi_SET(set_Name, vari):
     if getattr(sys, 'frozen', False):
         script_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
     else:
@@ -82,19 +37,21 @@ def modi_API(key):
     with open(path_set, 'r+') as file:
         content = file.readlines()
         row_without_None = [name.strip() for name in content]
-        for item in row_without_None:
-            if "API_key" in item:
+        for item in row_without_None:  # 'item' takes each value from the list in turn
+            if str(set_Name) in item:
                 cu = item
                 index = row_without_None.index(cu)
                 lines = content[index].strip()
-                last_element = lines.split()[-1]
-                s1 = lines.replace(last_element, key)
+                spl_word = ' = '
+                splitString2 = lines.split(spl_word, 1)[0]
+                print(splitString2)
+                result = ' '.join([splitString2, "=", vari])
                 file.seek(0)
-                content[index] = s1 + '\n'
+                content[index] = result + '\n'
                 file.writelines(content)
                 file.truncate()
-                return s1
-
+                return result
+      
 # Checks if the seleceted .exe is currently open
 def check_Status(exe_name):
     mic_Check=exe_name in (i.name() for i in psutil.process_iter())
