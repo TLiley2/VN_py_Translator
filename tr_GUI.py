@@ -12,20 +12,23 @@ from pathlib import Path
 # Reads API & Shortcut
 import backend
 global APIreader
-APIreader=backend.read_API()
+APIreader=backend.read_SET("API_key")
 global shortKey
-shortKey=backend.read_Short()
+shortKey=backend.read_SET("Shortcut")
 
 # Adds current API key as temp text in entry box
 def on_focus_in(e):
    e.widget.delete(0,"end")
 def on_focus_out(e):
-    if username_entry:
-        e.widget.insert(0,APIreader)
+    if e.widget == username_entry:
+        e.widget.insert(0, APIreader)
+    elif e.widget == username_entry2:
+        e.widget.insert(0, shortKey)
         
 # Open settings window
 def displaySetttings():
     global username_entry
+    global username_entry2
     newWindow = tk.Toplevel(root)
     newWindow.title("Class Display")
     newWindow.geometry('900x900')
@@ -45,7 +48,7 @@ def displaySetttings():
     username_entry.bind("<FocusOut>", on_focus_out)
     
     # Chanages API key to entrybox text
-    button = tk.Button(newWindow, text="Save", command=lambda: backend.modi_API(username_entry.get()))
+    button = tk.Button(newWindow, text="Save", command=lambda: backend.modi_SET("API_key",username_entry.get()))
     button.grid(column=2, row=0, padx=5, pady=5)
 
     username_label2 = tk.Label(newWindow, text="Activation shortcut:")
@@ -58,7 +61,7 @@ def displaySetttings():
     username_entry2.bind("<FocusOut>", on_focus_out)
     
     # Chanages Shortcut to entrybox text
-    button2 = tk.Button(newWindow, text="Save", command=lambda: backend.modi_API(username_entry2.get()))
+    button2 = tk.Button(newWindow, text="Save", command=lambda: backend.modi_SET("Shortcut",username_entry2.get()))
     button2.grid(column=2, row=1, padx=5, pady=5)
 
     caution_Label = tk.Label(newWindow, text='Remeber to add " + " \nin between keys')
@@ -112,11 +115,11 @@ monthchoosen = ttk.Combobox(root, values=a, width = 27, textvariable = n)
 monthchoosen.grid(column = 0, row = 1) 
 monthchoosen.current() 
 
-
+# Buttons
 label = tk.Label(root, text="Please select the game \nyou are currently running",font=("Arial", 10, "bold"))
 label.grid(column=0, row=0, sticky=tk.S, padx=5, pady=5)
 
-label = tk.Label(root, text="v0.50",font=("Arial", 10, "bold"))
+label = tk.Label(root, text="v0.5",font=("Arial", 10, "bold"))
 label.grid(column=1, row=2, sticky=tk.S, padx=5, pady=5)
 
 button = tk.Button(root, text="Activate", command=lambda: backend.check_Status(n.get()))
@@ -126,6 +129,12 @@ button2 = tk.Button(root, text="Set", command=displaySetttings)
 button.grid(column=0, row=2, padx=5, pady=5)
 button2.grid(column=1, row=0, sticky=tk.NE, padx=10, pady=10)
 
+def hotkey():
+    button.invoke()
+    root.after(1000, reset_button)
+
+def reset_button():
+    button.config(state="normal")
 # Keyboard shortcut for using "Activate"
-keyboard.add_hotkey(str(shortKey), lambda: button.invoke())
+keyboard.add_hotkey(str(shortKey), hotkey)
 root.mainloop()
