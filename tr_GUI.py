@@ -129,12 +129,6 @@ button2 = tk.Button(root, text="Set", command=displaySetttings)
 button.grid(column=0, row=2, padx=5, pady=5)
 button2.grid(column=1, row=0, sticky=tk.NE, padx=10, pady=10)
 
-def hotkey():
-    button.invoke()
-    root.after(1000, reset_button)
-
-def reset_button():
-    button.config(state="normal")
 # Keyboard shortcut for using "Activate"
-keyboard.add_hotkey(str(shortKey), hotkey)
+keyboard.add_hotkey(str(shortKey), button.invoke)
 root.mainloop()
