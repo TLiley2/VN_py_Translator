@@ -1,5 +1,4 @@
 import cv2
-from pytesseract import *
 import easyocr
 import tkinter as tk
 from screeninfo import get_monitors
