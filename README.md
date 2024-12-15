@@ -19,4 +19,4 @@ The program is not to fast all things considered taking about 15-17 secs to retu
   * Return the final list to the screen overlay function
 
   # License
-  The is none, but if you consider forking or using this code for your own project just make sure to credit me and link back here 🤗
+  GNU General Public License v3.0
