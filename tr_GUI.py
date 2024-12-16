@@ -15,6 +15,8 @@ global APIreader
 APIreader=backend.read_SET("API_key")
 global shortKey
 shortKey=backend.read_SET("Shortcut")
+global scanmed
+scanmed=backend.read_SET("scan_method")
 
 # Adds current API key as temp text in entry box
 def on_focus_in(e):
@@ -37,35 +39,54 @@ def displaySetttings():
     newWindow.configure(bg='grey')
     root.columnconfigure(0, weight=1)
     root.columnconfigure(1, weight=3)
+
+    intro_label = tk.Label(newWindow, text='Please restart after making\n changes')
+    intro_label.grid(column=1, row=0, sticky=tk.W, padx=5, pady=5)
     
     username_label = tk.Label(newWindow, text="API Key:")
-    username_label.grid(column=0, row=0, sticky=tk.E, padx=5, pady=5)
+    username_label.grid(column=0, row=1, sticky=tk.E, padx=5, pady=5)
     
     username_entry = tk.Entry(newWindow)
-    username_entry.grid(column=1, row=0, sticky=tk.E, padx=5, pady=5)
+    username_entry.grid(column=1, row=1, sticky=tk.W, padx=5, pady=5)
     username_entry.insert(0, APIreader)
     username_entry.bind("<FocusIn>", on_focus_in)
     username_entry.bind("<FocusOut>", on_focus_out)
     
     # Chanages API key to entrybox text
     button = tk.Button(newWindow, text="Save", command=lambda: backend.modi_SET("API_key",username_entry.get()))
-    button.grid(column=2, row=0, padx=5, pady=5)
+    button.grid(column=2, row=1, padx=5, pady=5)
 
     username_label2 = tk.Label(newWindow, text="Activation shortcut:")
-    username_label2.grid(column=0, row=1, sticky=tk.W, padx=5, pady=5)
+    username_label2.grid(column=0, row=2, sticky=tk.W, padx=5, pady=5)
     
     username_entry2 = tk.Entry(newWindow)
-    username_entry2.grid(column=1, row=1, sticky=tk.E, padx=5, pady=5)
+    username_entry2.grid(column=1, row=2, sticky=tk.W, padx=5, pady=5)
     username_entry2.insert(0, shortKey)
     username_entry2.bind("<FocusIn>", on_focus_in)
     username_entry2.bind("<FocusOut>", on_focus_out)
     
     # Chanages Shortcut to entrybox text
     button2 = tk.Button(newWindow, text="Save", command=lambda: backend.modi_SET("Shortcut",username_entry2.get()))
-    button2.grid(column=2, row=1, padx=5, pady=5)
+    button2.grid(column=2, row=2, padx=5, pady=5)
 
     caution_Label = tk.Label(newWindow, text='Remeber to add " + " \nin between keys')
-    caution_Label.grid(column=1, row=2, sticky=tk.W, padx=5, pady=5)
+    caution_Label.grid(column=1, row=3, sticky=tk.W, padx=5, pady=5)
+
+    username_label3 = tk.Label(newWindow, text="scan_method:")
+    username_label3.grid(column=0, row=4, sticky=tk.E, padx=5, pady=5)
+    
+    username_entry3 = tk.Entry(newWindow)
+    username_entry3.grid(column=1, row=4, sticky=tk.W, padx=5, pady=5)
+    username_entry3.insert(0, scanmed)
+    username_entry3.bind("<FocusIn>", on_focus_in)
+    username_entry3.bind("<FocusOut>", on_focus_out)
+    
+    # Chanages Shortcut to entrybox text
+    button3 = tk.Button(newWindow, text="Save", command=lambda: backend.modi_SET("scan_method",username_entry3.get()))
+    button3.grid(column=2, row=4, padx=5, pady=5)
+
+    wr_label = tk.Label(newWindow, text='0 = Whole Screen \n1 = scan box')
+    wr_label.grid(column=1, row=5, sticky=tk.W, padx=5, pady=5)
     
     newWindow.mainloop()
 
@@ -122,7 +143,15 @@ label.grid(column=0, row=0, sticky=tk.S, padx=5, pady=5)
 label = tk.Label(root, text="v0.5",font=("Arial", 10, "bold"))
 label.grid(column=1, row=2, sticky=tk.S, padx=5, pady=5)
 
-button = tk.Button(root, text="Activate", command=lambda: backend.check_Status(n.get()))
+def stopmed():
+    if int(scanmed) ==0:
+        backend.check_Status(n.get(), None,None,None,None,0)
+    elif int(scanmed) ==1 or (n.get())!= None:
+        exe_Name=n.get()
+        import scanbox
+        scanbox.boxy(exe_Name)
+
+button = tk.Button(root, text="Activate", command=lambda: stopmed())
 button2 = tk.Button(root, text="Set", command=displaySetttings)
 #button2.image = photo
 
