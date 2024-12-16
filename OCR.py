@@ -68,6 +68,7 @@ def prime(imgap):
     for item in result if 0.09 < item[2] < 1
     ]
     # [width x hiegth]
+    # [x x y]
 
     # Send all text for batch transaltion
     all_text = [item[1] for item in processed_results]
