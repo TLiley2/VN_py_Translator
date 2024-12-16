@@ -116,6 +116,10 @@
   {
    "optionDest": "datas",
    "value": "C:/Users/tnu20/anaconda3/python.exe;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/tnu20/OneDrive/Documents/Documents/LIGMA/scanbox.py;."
   }
  ],
  "nonPyinstallerOptions": {
