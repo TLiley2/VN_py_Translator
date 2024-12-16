@@ -1,163 +1,138 @@
+import psutil 
 import tkinter as tk
-from tkinter import ttk
-from PIL import Image, ImageTk
+import pygetwindow as gw
+import pyautogui
+from PIL import Image
 import subprocess
 import os
-import keyboard
 import sys
-import time
 from pathlib import Path
+import screeninfo
+import cv2 
+import numpy as np
 
+#Reads setting values                
+def read_SET(set_Name):
+    if getattr(sys, 'frozen', False):
+        script_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+    else:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+    path_set = os.path.join(script_dir, "settings.ini")
+    with open(path_set, 'r') as file:
+        content = file.readlines()
+        row_without_None = [name.strip() for name in content]
+        for item in row_without_None:  # 'item' takes each value from the list in turn
+            if str(set_Name) in item:
+                cu = item
+                index = row_without_None.index(cu)
+                lines = content[index].strip()
+                spl_word = '= '
+                res = lines.split(spl_word, 1)
+                splitString = res[1]
+                return splitString
+            
+def modi_SET(set_Name, vari):
+    if getattr(sys, 'frozen', False):
+        script_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+    else:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+    path_set = os.path.join(script_dir, "settings.ini")
+    with open(path_set, 'r+') as file:
+        content = file.readlines()
+        row_without_None = [name.strip() for name in content]
+        for item in row_without_None:  # 'item' takes each value from the list in turn
+            if str(set_Name) in item:
+                cu = item
+                index = row_without_None.index(cu)
+                lines = content[index].strip()
+                spl_word = ' = '
+                splitString2 = lines.split(spl_word, 1)[0]
+                print(splitString2)
+                result = ' '.join([splitString2, "=", vari])
+                file.seek(0)
+                content[index] = result + '\n'
+                file.writelines(content)
+                file.truncate()
+                return result
+      
+# Checks if the seleceted .exe is currently open
+def check_Status(exe_name,x1,y1,x2,y2,acti):
+    mic_Check=exe_name in (i.name() for i in psutil.process_iter())
+    if mic_Check == True:
+        if acti == 0:
+            appl_name=exe_name.replace(".exe","")
+            screenshot(appl_name, None,None,None,None,0)
+        elif acti== 1:
+            screenshot(None,x1,y1,x2,y2,1)
+    elif mic_Check == False :
+        NOPE = tk.Tk()
+        NOPE.title("Error 404")
+        NOPE.minsize(300, 200)
+        NOPE.maxsize(600, 200)
+        NOPE.configure(bg='grey')
+        NOPE.columnconfigure(0, weight=1)
+        NOPE.columnconfigure(1, weight=1)
+        NOPE.columnconfigure(2, weight=1)
+        NOPE.rowconfigure(0, weight=1)
+        l = tk.Label(NOPE,text="Error 404: Program is not runnning \n 1.)Please fully close this application\n 2.)Start your desired game\n 3.)restart this application and try again\n Sorry for the inconvience ;-)", font=("Noto Sans JP Bold", 10))
+        l.grid(column=1, row=0)
+        NOPE.mainloop()
 
-# Reads API & Shortcut
-import backend
-global APIreader
-APIreader=backend.read_SET("API_key")
-global shortKey
-shortKey=backend.read_SET("Shortcut")
-global scanmed
-scanmed=backend.read_SET("scan_method")
+# Takes screenshot of the program       
+def screenshot(app_name,x1,y1,x2,y2,acti):
+    if acti == 0:
+        exe_ad = app_name
 
-# Adds current API key as temp text in entry box
-def on_focus_in(e):
-   e.widget.delete(0,"end")
-def on_focus_out(e):
-    if e.widget == username_entry:
-        e.widget.insert(0, APIreader)
-    elif e.widget == username_entry2:
-        e.widget.insert(0, shortKey)
-        
-# Open settings window
-def displaySetttings():
-    global username_entry
-    global username_entry2
-    newWindow = tk.Toplevel(root)
-    newWindow.title("Class Display")
-    newWindow.geometry('900x900')
-    newWindow.minsize(400, 200)
-    newWindow.maxsize(600, 400)
-    newWindow.configure(bg='grey')
-    root.columnconfigure(0, weight=1)
-    root.columnconfigure(1, weight=3)
+        # Returns the programs current window title
+        cmd = f'powershell -Command "$OutputEncoding = [System.Text.Encoding]::UTF8; chcp 65001; Get-Process -Name {exe_ad} | ForEach-Object {{ $_.MainWindowTitle }}"'
+        proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    intro_label = tk.Label(newWindow, text='Please restart after making\n changes')
-    intro_label.grid(column=1, row=0, sticky=tk.W, padx=5, pady=5)
-    
-    username_label = tk.Label(newWindow, text="API Key:")
-    username_label.grid(column=0, row=1, sticky=tk.E, padx=5, pady=5)
-    
-    username_entry = tk.Entry(newWindow)
-    username_entry.grid(column=1, row=1, sticky=tk.W, padx=5, pady=5)
-    username_entry.insert(0, APIreader)
-    username_entry.bind("<FocusIn>", on_focus_in)
-    username_entry.bind("<FocusOut>", on_focus_out)
-    
-    # Chanages API key to entrybox text
-    button = tk.Button(newWindow, text="Save", command=lambda: backend.modi_SET("API_key",username_entry.get()))
-    button.grid(column=2, row=1, padx=5, pady=5)
+        w = None
+        for line in proc.stdout:
+            if line.strip():  # Skip empty lines
+                try:
+                    w = line.decode('utf-8').strip()  # Attempt UTF-8 decoding
+                except UnicodeDecodeError:
+                    print("Failed to decode output with UTF-8. Trying UTF-16.")
+                    w = line.decode('utf-16-le').strip()  # Try UTF-16LE as a fallback
 
-    username_label2 = tk.Label(newWindow, text="Activation shortcut:")
-    username_label2.grid(column=0, row=2, sticky=tk.W, padx=5, pady=5)
-    
-    username_entry2 = tk.Entry(newWindow)
-    username_entry2.grid(column=1, row=2, sticky=tk.W, padx=5, pady=5)
-    username_entry2.insert(0, shortKey)
-    username_entry2.bind("<FocusIn>", on_focus_in)
-    username_entry2.bind("<FocusOut>", on_focus_out)
-    
-    # Chanages Shortcut to entrybox text
-    button2 = tk.Button(newWindow, text="Save", command=lambda: backend.modi_SET("Shortcut",username_entry2.get()))
-    button2.grid(column=2, row=2, padx=5, pady=5)
+        if not w:
+            print("No window title found. Is the application running?")
+            return
 
-    caution_Label = tk.Label(newWindow, text='Remeber to add " + " \nin between keys')
-    caution_Label.grid(column=1, row=3, sticky=tk.W, padx=5, pady=5)
+        window_title = w  # Replace with the actual window title
+        #print(window_title)
 
-    username_label3 = tk.Label(newWindow, text="scan_method:")
-    username_label3.grid(column=0, row=4, sticky=tk.E, padx=5, pady=5)
-    
-    username_entry3 = tk.Entry(newWindow)
-    username_entry3.grid(column=1, row=4, sticky=tk.W, padx=5, pady=5)
-    username_entry3.insert(0, scanmed)
-    username_entry3.bind("<FocusIn>", on_focus_in)
-    username_entry3.bind("<FocusOut>", on_focus_out)
-    
-    # Chanages Shortcut to entrybox text
-    button3 = tk.Button(newWindow, text="Save", command=lambda: backend.modi_SET("scan_method",username_entry3.get()))
-    button3.grid(column=2, row=4, padx=5, pady=5)
+        # Returns the the dimensions of the app's window
+        window = gw.getWindowsWithTitle(window_title)[0]
+        left, top, right, bottom = window.left, window.top, window.right, window.bottom
+    elif acti== 1:
+        left, top, right, bottom = x1,y1,x2,y2
 
-    wr_label = tk.Label(newWindow, text='0 = Whole Screen \n1 = scan box')
-    wr_label.grid(column=1, row=5, sticky=tk.W, padx=5, pady=5)
-    
-    newWindow.mainloop()
+    print(left, top, right, bottom)
 
-# Main GUI
-print("Starting GUI setup...")
-start = time.time()
-root = tk.Tk()
-print(f"Tkinter root setup: {time.time() - start:.2f} seconds")
+    if getattr(sys, 'frozen', False):
+        script_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+    else:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+    path_set = os.path.join(script_dir, "result.png")
+    print(path_set)
 
-root.minsize(400, 200)
-root.maxsize(600, 400)
-root.configure(bg='grey')
-root.title("VN_py_Translator")
-start = time.time()
+    # Take a screenshot of the window region and save it to the specified path
+    screenshot = pyautogui.screenshot(region=(left, top, right - left, bottom - top))
+    if acti == 0:
+        screenshot.save(path_set)
+    if acti == 1:
+        screen = screeninfo.get_monitors()[0]
+        width = screen.width
+        height = screen.height
+        screenshot_np = np.array(screenshot)
+        img_pil = Image.fromarray(cv2.cvtColor(screenshot_np, cv2.COLOR_BGR2RGB))
+        im = Image.new(mode="RGB", size=(width, height),color = (255, 255, 255))
+        im.paste(img_pil, (x1, y1))
+        im.save(path_set)
 
-def on_closing():
-    root.destroy()  # Close the Tkinter window
-    sys.exit()     # Exit the program completely
-
-root.protocol("WM_DELETE_WINDOW", on_closing)  # Bind the close button to `on_closing`
-
-root.columnconfigure(0, weight=9)
-root.columnconfigure(1, weight=1)
-root.rowconfigure(0, weight=1)
-root.rowconfigure(1, weight=1)
-root.rowconfigure(2, weight=1)
-
-# image = Image.open("cog.png")
-# resized_image = image.resize((20, 20))
-# photo = ImageTk.PhotoImage(resized_image)
-
-n = tk.StringVar()
-
-# List of currenly running app  
-a=[]
-
-# Searches Apps currently running 
-cmd = ('powershell "gps | where {$_.MainWindowTitle} | select -ExpandProperty Path | Split-Path -Leaf')
-proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-for line in proc.stdout:
-    if line.rstrip():
-       # print(line.decode().rstrip())
-       a.append(line.decode().rstrip())
-
-# Drop down menu
-monthchoosen = ttk.Combobox(root, values=a, width = 27, textvariable = n)
-monthchoosen.grid(column = 0, row = 1) 
-monthchoosen.current() 
-
-# Buttons
-label = tk.Label(root, text="Please select the game \nyou are currently running",font=("Arial", 10, "bold"))
-label.grid(column=0, row=0, sticky=tk.S, padx=5, pady=5)
-
-label = tk.Label(root, text="v0.5",font=("Arial", 10, "bold"))
-label.grid(column=1, row=2, sticky=tk.S, padx=5, pady=5)
-
-def stopmed():
-    if int(scanmed) ==0:
-        backend.check_Status(n.get(), None,None,None,None,0)
-    elif int(scanmed) ==1 or (n.get())!= None:
-        exe_Name=n.get()
-        import scanbox
-        scanbox.boxy(exe_Name)
-
-button = tk.Button(root, text="Activate", command=lambda: stopmed())
-button2 = tk.Button(root, text="Set", command=displaySetttings)
-#button2.image = photo
-
-button.grid(column=0, row=2, padx=5, pady=5)
-button2.grid(column=1, row=0, sticky=tk.NE, padx=10, pady=10)
-
-# Keyboard shortcut for using "Activate"
-keyboard.add_hotkey(str(shortKey), button.invoke)
-root.mainloop()
+    #Activates OCR file
+    import OCR
+    OCR.exec(path_set)
+ 
