@@ -53,13 +53,14 @@ def modi_SET(set_Name, vari):
                 return result
       
 # Checks if the seleceted .exe is currently open
-def check_Status(exe_name):
+def check_Status(exe_name,x1,y1,x2,y2,acti):
     mic_Check=exe_name in (i.name() for i in psutil.process_iter())
     if mic_Check == True:
-        #print(exe_name)
-        print("yes1")
-        appl_name=exe_name.replace(".exe","")
-        screenshot(appl_name)
+        if acti == 0:
+            appl_name=exe_name.replace(".exe","")
+            screenshot(appl_name, None,None,None,None,0)
+        elif acti== 1:
+            screenshot(None,x1,y1,x2,y2,1)
     elif mic_Check == False :
         NOPE = tk.Tk()
         NOPE.title("Error 404")
@@ -75,32 +76,35 @@ def check_Status(exe_name):
         NOPE.mainloop()
 
 # Takes screenshot of the program       
-def screenshot(app_name):
-    exe_ad = app_name
+def screenshot(app_name,x1,y1,x2,y2,acti):
+    if acti == 0:
+        exe_ad = app_name
 
-    # Returns the programs current window title
-    cmd = f'powershell -Command "$OutputEncoding = [System.Text.Encoding]::UTF8; chcp 65001; Get-Process -Name {exe_ad} | ForEach-Object {{ $_.MainWindowTitle }}"'
-    proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # Returns the programs current window title
+        cmd = f'powershell -Command "$OutputEncoding = [System.Text.Encoding]::UTF8; chcp 65001; Get-Process -Name {exe_ad} | ForEach-Object {{ $_.MainWindowTitle }}"'
+        proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    w = None
-    for line in proc.stdout:
-        if line.strip():  # Skip empty lines
-            try:
-                w = line.decode('utf-8').strip()  # Attempt UTF-8 decoding
-            except UnicodeDecodeError:
-                print("Failed to decode output with UTF-8. Trying UTF-16.")
-                w = line.decode('utf-16-le').strip()  # Try UTF-16LE as a fallback
+        w = None
+        for line in proc.stdout:
+            if line.strip():  # Skip empty lines
+                try:
+                    w = line.decode('utf-8').strip()  # Attempt UTF-8 decoding
+                except UnicodeDecodeError:
+                    print("Failed to decode output with UTF-8. Trying UTF-16.")
+                    w = line.decode('utf-16-le').strip()  # Try UTF-16LE as a fallback
 
-    if not w:
-        print("No window title found. Is the application running?")
-        return
+        if not w:
+            print("No window title found. Is the application running?")
+            return
 
-    window_title = w  # Replace with the actual window title
-    #print(window_title)
+        window_title = w  # Replace with the actual window title
+        #print(window_title)
 
-    # Returns the the dimensions of the app's window
-    window = gw.getWindowsWithTitle(window_title)[0]
-    left, top, right, bottom = window.left, window.top, window.right, window.bottom
+        # Returns the the dimensions of the app's window
+        window = gw.getWindowsWithTitle(window_title)[0]
+        left, top, right, bottom = window.left, window.top, window.right, window.bottom
+    elif acti== 1:
+            left, top, right, bottom = x1,y1,x2,y2
 
     if getattr(sys, 'frozen', False):
         script_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
