@@ -1,19 +1,20 @@
-import cv2
 import easyocr
 import tkinter as tk
-from screeninfo import get_monitors
-from PIL import Image
-import torch
 import os
 import sys
-#import googletrans
-import requests
 
 sys.stderr = open(os.devnull, 'w') # Prevent printing warnings
 b=[]
-reader = easyocr.Reader(['ja'], gpu=True) # this needs to run only once to load the model into memory
+sys.stderr = open(os.devnull, 'w') # Prevent printing warnings
+b=[]
+if getattr(sys, 'frozen', False):
+    script_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+else:
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+reader = easyocr.Reader(['ja'], user_network_directory=script_dir, recog_network="japanese_g2", gpu=True)
 
 def google_tran(inpoot):
+    import requests
     # Define the input text and target language
     text = inpoot
     source_lang = "ja"
@@ -40,35 +41,53 @@ def google_tran(inpoot):
         print("Failed to retrieve translation.")
 
 def prime(imgap):
-    #print("prime")
+    import cv2
+    print("prime")
+
     # Load image
     img = cv2.imread(imgap)
     if img is None:
         print("Image not found at path")
 
-    # Inverts Image
-    invert = cv2.bitwise_not(img)
+    # Increase contrast
+    contrast = cv2.convertScaleAbs(img, alpha=1.5, beta=1)
 
-    # Cranks up contrast Image
-    contrast = cv2.convertScaleAbs(invert, alpha=1.5, beta=1)
-
-    # Greyscales Image
+    # Greyscale
     gray = cv2.cvtColor(contrast, cv2.COLOR_BGR2GRAY)
-    
-    # Apply threshold to convert to binary image
-    threshold_img = cv2.threshold(gray, 128, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
-    #os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-    #torch.device('cpu')
-    #print("halit")
-    
-    result = reader.readtext(threshold_img, text_threshold=0.6, low_text=0.2)
+    # Denoise the image with Gaussian Blur
+    #blurred = cv2.GaussianBlur(gray, (3, 3), 0)
+
+    # Threshold the image (binary)
+    _, threshold_img = cv2.threshold(gray, 128, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
+    # Calculate the percentage of black pixels
+    import numpy as np
+    black_pixels = np.sum(threshold_img == 0)
+    total_pixels = threshold_img.size
+    black_ratio = black_pixels / total_pixels
+
+    # Invert the image if black pixels dominate
+    if black_ratio > 0.75:
+        processed_img = cv2.bitwise_not(threshold_img)
+    else:
+        processed_img = threshold_img
+
+    # Perform OCR on the processed image
+    result = reader.readtext(processed_img, text_threshold=0.7, low_text=0.5)
+    #print(result)
     processed_results = [
     ([list(map(int, bbox)) for bbox in item[0]], item[1], item[2]) 
-    for item in result if 0.09 < item[2] < 1
+    for item in result if 0.05 < item[2] < 1
     ]
     # [width x hiegth]
     # [x x y]
+
+    # existing_items = [
+    # item for item in processed_results
+    # if abs(int(item[0][0][1])-int(item[0][0][1]))<=5]
+
+    # print(existing_items)
 
     # Send all text for batch transaltion
     all_text = [item[1] for item in processed_results]
@@ -82,10 +101,16 @@ def prime(imgap):
 
     for i, item in enumerate(processed_results):
         min_x, min_y = item[0][0][0], item[0][0][1]
-        b.append([min_x, min_y, translated[i]])
+        trans_text=translated[i]
+        b.append([min_x, min_y, trans_text])
+        #print(b)
+
+    # height, width = img.shape[:2]
+    # aspect_ratio = height / width
+    # new_height = int(800 * aspect_ratio)
     # cv2.namedWindow("Image", cv2.WINDOW_NORMAL)  
-    # cv2.resizeWindow("Image", 500, 500)         
-    # cv2.imshow("Image", gray)                   
+    # cv2.resizeWindow("Image", 800, new_height)         
+    # cv2.imshow("Image", processed_img)                   
     # cv2.waitKey(0)
 
 def exec(ima):
@@ -102,6 +127,7 @@ def exec(ima):
         overlay.win.mainloop()
 
 def overlay(xval, yval, tra_text, imge):
+    from PIL import Image
     s = f"{xval}"  # x is the x-coordinate for .place()
     e = f"{yval}"  # y is the y-coordinate for .place()
     g = f"{tra_text}"  # Only tra_text is the label text
@@ -137,5 +163,6 @@ def overlay(xval, yval, tra_text, imge):
 
     overlay.win.deiconify() 
 
-# d=r"C:\Users\tnu20\Downloads\New folder\SLPM-67003_20241208234657.png"
+# d=r"C:\Users\tnu20\Downloads\sw34.png"
+# #d=r"C:\Users\tnu20\OneDrive\Documents\Documents\LIGMA\swstella_system_cg1.jpg"
 # exec(d)
