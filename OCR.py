@@ -11,7 +11,7 @@ if getattr(sys, 'frozen', False):
     script_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
 else:
     script_dir = os.path.dirname(os.path.abspath(__file__))
-reader = easyocr.Reader(['ja'], user_network_directory=script_dir, recog_network="japanese_g2", gpu=True)
+reader = easyocr.Reader(['ja'], gpu=True)
 
 def google_tran(inpoot):
     import requests
