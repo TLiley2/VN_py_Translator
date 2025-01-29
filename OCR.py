@@ -5,13 +5,11 @@ import sys
 
 sys.stderr = open(os.devnull, 'w') # Prevent printing warnings
 b=[]
-sys.stderr = open(os.devnull, 'w') # Prevent printing warnings
-b=[]
 if getattr(sys, 'frozen', False):
     script_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
 else:
     script_dir = os.path.dirname(os.path.abspath(__file__))
-reader = easyocr.Reader(['ja'], gpu=True)
+reader = easyocr.Reader(['ja'], user_network_directory=script_dir, recog_network="japanese_g2", gpu=True)
 
 def google_tran(inpoot):
     import requests
@@ -20,7 +18,7 @@ def google_tran(inpoot):
     source_lang = "ja"
     target_lang = "en"
 
-    # URL for Google Translate might not be accessible directly. Example assumes a public translation API endpoint.
+    # URL for Google Translate
     url = f"https://translate.googleapis.com/translate_a/single"
     params = {
         "client": "gtx",
@@ -83,12 +81,6 @@ def prime(imgap):
     # [width x hiegth]
     # [x x y]
 
-    # existing_items = [
-    # item for item in processed_results
-    # if abs(int(item[0][0][1])-int(item[0][0][1]))<=5]
-
-    # print(existing_items)
-
     # Send all text for batch transaltion
     all_text = [item[1] for item in processed_results]
     translated = google_tran(all_text)
@@ -102,8 +94,11 @@ def prime(imgap):
     for i, item in enumerate(processed_results):
         min_x, min_y = item[0][0][0], item[0][0][1]
         trans_text=translated[i]
+        # if i < len(processed_results) - 1 and min_x == processed_results[i + 1][0][0][0]:
+        #     b.append([min_x, min_y, trans_text+translated[i + 1]])
+        # else:
         b.append([min_x, min_y, trans_text])
-        #print(b)
+        print(b)
 
     # height, width = img.shape[:2]
     # aspect_ratio = height / width
