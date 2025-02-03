@@ -1,7 +1,7 @@
 # VN_py_Translator
 VN_py_Translator is a Visual novel Translator I made in python in about aweek in a half in my spare free time. The function of programs is to overlay translated text onto the screen of any visual novel you are playing. 
 
-The program is not to fast all things considered taking about 15-17 secs to return with a translation overlay. But I've tried to reduce the run time as much as possible if you've got a concrete method of reucing runtime the sound off in the pull request or something IDK ¯\_(ツ)_/¯
+The program is not to fast all things considered taking about 15-17 secs to return with a translation overlay, but I've tried to reduce the run time as much as possible.
 
 <ins>**The app works like this:**</ins>
 * Selecting the desired app from drop box
