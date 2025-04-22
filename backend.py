@@ -6,7 +6,6 @@ from PIL import Image
 import subprocess
 import os
 import sys
-from pathlib import Path
 import screeninfo
 import cv2 
 import numpy as np
