@@ -3,6 +3,8 @@ VN_py_Translator is a Visual novel Translator I made in python in about aweek in
 
 The program is not to fast all things considered taking about 7-11 secs to return with a translation overlay, but I've tried to reduce the run time as much as possible.
 
+*Note: This program requires a constant online connection to use inorder to connect to online translator.
+
 <img src=https://i.imgur.com/hhKlmeg.png width="400" height="225"><img src=https://i.imgur.com/zoD8tBo.png width="400" height="225">
 
 <ins>**The app works like this:**</ins>
