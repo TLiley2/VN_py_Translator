@@ -1,12 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
-from PIL import Image, ImageTk
 import subprocess
-import os
 import keyboard
 import sys
 import time
-from pathlib import Path
 
 
 # Reads API & Shortcut
@@ -140,7 +137,7 @@ monthchoosen.current()
 label = tk.Label(root, text="Please select the game \nyou are currently running",font=("Arial", 10, "bold"))
 label.grid(column=0, row=0, sticky=tk.S, padx=5, pady=5)
 
-label = tk.Label(root, text="v0.5",font=("Arial", 10, "bold"))
+label = tk.Label(root, text="v1.1",font=("Arial", 10, "bold"))
 label.grid(column=1, row=2, sticky=tk.S, padx=5, pady=5)
 
 def stopmed():
